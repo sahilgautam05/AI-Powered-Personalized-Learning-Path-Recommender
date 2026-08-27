@@ -6,6 +6,9 @@
 [![SQLite](https://img.shields.io/badge/SQLite3-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://www.sqlite.org/)
 [![Python](https://img.shields.io/badge/Python_3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://ai-powered-personalized-learning-path-recommender.streamlit.app)
+
+> 🌐 **Live Web Application**: [https://ai-powered-personalized-learning-path-recommender.streamlit.app](https://ai-powered-personalized-learning-path-recommender.streamlit.app)
 
 > **LearnPath AI** is an intelligent, adaptive EdTech SaaS platform designed to generate dynamic, personalized learning roadmaps. It dynamically tailors curriculum modules, skill gap analytics, progress telemetry, and resource recommendations based on each learner's unique career goal, experience level, study schedule, and real-time proficiency.
 
@@ -169,11 +172,3 @@ AI-Powered-Personalized-Learning-Path-Recommender/
 ## 📜 License
 
 Distributed under the **MIT License**. See `LICENSE` for more details.
-
----
-
-## 👤 Author
-
-**Sahil Gautam**  
-- GitHub: [@sahilgautam05](https://github.com/sahilgautam05)  
-- Project Repository: [AI-Powered-Personalized-Learning-Path-Recommender](https://github.com/sahilgautam05/AI-Powered-Personalized-Learning-Path-Recommender.git)
