@@ -1,0 +1,19 @@
+{
+  "name": "learnpath-ai",
+  "version": "1.0.0",
+  "description": "LearnPath AI — Personalized Learning Path Recommender EdTech SaaS Application",
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build",
+    "start": "python -m backend.main"
+  },
+  "keywords": [
+    "edtech",
+    "ai-recommender",
+    "learning-roadmap",
+    "fastapi",
+    "react",
+    "vite"
+  ],
+  "author": "LearnPath AI Team",
+  "license": "MIT"
+}

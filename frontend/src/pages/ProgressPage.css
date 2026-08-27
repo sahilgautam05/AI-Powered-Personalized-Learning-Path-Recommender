@@ -1,0 +1,139 @@
+.progress-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.metrics-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+}
+
+.metric-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.metric-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.metric-icon.streak { background-color: var(--warning-light); color: var(--warning); }
+.metric-icon.hours { background-color: var(--primary-light); color: var(--primary); }
+.metric-icon.score { background-color: var(--success-light); color: var(--success); }
+.metric-icon.projects { background-color: #e0f2fe; color: #0284c7; }
+
+.metric-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.m-val {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.m-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.charts-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 840px) {
+  .charts-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chart-header h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.svg-chart-container {
+  width: 100%;
+  padding: 0.5rem 0;
+}
+
+.bar-chart-svg {
+  width: 100%;
+  height: auto;
+}
+
+.bar-rect.active {
+  fill: var(--primary);
+  transition: fill 0.2s ease;
+}
+
+.bar-rect.active:hover {
+  fill: var(--primary-hover);
+}
+
+.bar-rect.empty {
+  fill: var(--bg-subtle);
+}
+
+.chart-axis-label {
+  font-size: 12px;
+  fill: var(--text-secondary);
+  font-weight: 600;
+}
+
+.chart-val-label {
+  font-size: 11px;
+  fill: var(--primary-hover);
+  font-weight: 700;
+}
+
+.skills-growth-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.growth-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.growth-row-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.g-name {
+  font-weight: 700;
+}
+
+.g-val {
+  font-weight: 800;
+  color: var(--primary);
+}

@@ -1,0 +1,76 @@
+.explore-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.filter-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .filter-controls-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.explore-search {
+  position: relative;
+  flex: 1;
+  max-width: 400px;
+}
+
+.explore-search .icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+}
+
+.explore-search input {
+  width: 100%;
+  padding: 0.6rem 0.85rem 0.6rem 2.4rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+}
+
+.type-filter-buttons {
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+}
+
+.filter-btn {
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  font-size: 0.825rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background-color: var(--bg-surface);
+  transition: var(--transition);
+}
+
+.filter-btn:hover {
+  background-color: var(--bg-subtle);
+  color: var(--text-primary);
+}
+
+.filter-btn.active {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.recommendations-catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
