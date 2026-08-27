@@ -2,10 +2,6 @@
 frontend/node_modules/
 node_modules/
 
-# Vite production build output
-frontend/dist/
-dist/
-
 # Python virtual environment & bytecode
 backend/__pycache__/
 __pycache__/
