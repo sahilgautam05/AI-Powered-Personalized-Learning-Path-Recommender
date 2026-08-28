@@ -170,7 +170,9 @@ def calculate_recommendation_score(resource: ResourceItem, profile: LearnerProfi
         interest_score = 80
 
     # 6. Learning Preference Match (10%)
-    if profile.preferred_resource_type == "All" or profile.preferred_resource_type.lower() in resource.type.lower():
+    pref_type = (profile.preferred_resource_type or "All").lower()
+    res_type = (resource.type or "").lower()
+    if pref_type == "all" or pref_type in res_type or res_type in pref_type:
         preference_score = 100
     else:
         preference_score = 50
