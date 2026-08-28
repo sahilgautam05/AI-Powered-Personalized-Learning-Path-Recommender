@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Bot, Send, Trash2, Sparkles, User, RefreshCw } from 'lucide-react';
-import { api } from '../services/api';
+import { api, generateLocalAiReply } from '../services/api';
 import './AiAssistant.css';
 
 export default function AiAssistant({ profile }) {
@@ -8,7 +8,7 @@ export default function AiAssistant({ profile }) {
     {
       id: 1,
       sender: 'ai',
-      text: `Hello ${profile?.name || 'Sahil'}! 👋 I'm your **LearnPath AI Mentor**.\n\nI'm fully synchronized with your **${profile?.goal || 'Cybersecurity Analyst'}** goal and your current **68% completion progress**.\n\nHow can I help you master your skills today?`,
+      text: `Hello ${profile?.name || 'Sahil'}! 👋 I'm your **LearnPath AI Mentor**.\n\nI'm fully synchronized with your **${profile?.goal || 'Cybersecurity Analyst'}** goal.\n\nHow can I help you master your skills today?`,
       followups: [
         "Why was this course recommended?",
         "Explain TCP/IP simply.",
@@ -57,11 +57,12 @@ export default function AiAssistant({ profile }) {
       };
       setMessages(prev => [...prev, aiMsg]);
     } catch (err) {
+      const fallback = generateLocalAiReply(query, profile);
       setMessages(prev => [...prev, {
         id: Date.now() + 1,
         sender: 'ai',
-        text: "I experienced a temporary connection hiccup. Please try asking again!",
-        followups: []
+        text: fallback.reply,
+        followups: fallback.suggested_followups
       }]);
     } finally {
       setIsLoading(false);
