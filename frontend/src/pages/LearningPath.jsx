@@ -16,24 +16,30 @@ import {
 } from 'lucide-react';
 import './LearningPath.css';
 
-export default function LearningPath({ learningPath, onOpenAssessment, onOpenResource }) {
-  const [expandedPhases, setExpandedPhases] = useState({ mod_03: true });
-  const [completedItems, setCompletedItems] = useState({
-    'res_01': true,
-    'res_02': true,
-    'res_08': true,
-    'res_10': true
+export default function LearningPath({ learningPath, onOpenAssessment, onOpenResource, completedResourceIds = new Set(), onMarkComplete }) {
+  const phases = learningPath?.phases || [];
+
+  const [expandedPhases, setExpandedPhases] = useState(() => {
+    const init = {};
+    if (phases && phases.length > 0) {
+      phases.forEach(p => {
+        init[p.id] = (p.status === 'in_progress' || p.status === 'completed');
+      });
+      // Fallback expand first phase
+      if (phases[0]) init[phases[0].id] = true;
+    }
+    return init;
   });
 
   const togglePhase = (phaseId) => {
     setExpandedPhases(prev => ({ ...prev, [phaseId]: !prev[phaseId] }));
   };
 
-  const toggleResourceCompleted = (resId) => {
-    setCompletedItems(prev => ({ ...prev, [resId]: !prev[resId] }));
+  const toggleResourceCompleted = (resId, skills = []) => {
+    if (onMarkComplete) {
+      onMarkComplete(resId, skills);
+    }
   };
-
-  const phases = learningPath?.phases || [];
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -117,14 +123,14 @@ export default function LearningPath({ learningPath, onOpenAssessment, onOpenRes
 
                     <div className="resources-list">
                       {phase.resources.map((res) => {
-                        const isDone = !!completedItems[res.id];
+                        const isDone = completedResourceIds.has(res.id);
                         return (
                           <div key={res.id} className={`resource-row-item ${isDone ? 'done' : ''}`}>
                             <input
                               type="checkbox"
                               className="custom-checkbox"
                               checked={isDone}
-                              onChange={() => toggleResourceCompleted(res.id)}
+                              onChange={() => toggleResourceCompleted(res.id, res.skills || [])}
                             />
                             {getResourceIcon(res.type)}
 

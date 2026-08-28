@@ -212,12 +212,20 @@
 .next-action-side {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-end;
+  justify-content: space-between;
   gap: 1rem;
   background-color: var(--bg-surface);
   padding: 1.25rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--primary-light);
+}
+
+.next-buttons-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
 }
 
 .match-big-pill {

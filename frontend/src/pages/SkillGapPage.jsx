@@ -4,14 +4,36 @@ import './SkillGapPage.css';
 
 export default function SkillGapPage({ profile, skillGapData, onImproveSkill }) {
   const goalName = profile?.goal || 'Cybersecurity Analyst';
-  const skills = skillGapData?.skills || [
-    { skill_name: 'SIEM', current_level: 40, required_level: 85, gap: 45, category: 'Technical' },
-    { skill_name: 'Incident Response', current_level: 20, required_level: 85, gap: 65, category: 'Technical' },
-    { skill_name: 'Threat Detection', current_level: 15, required_level: 80, gap: 65, category: 'Technical' },
-    { skill_name: 'Linux', current_level: 60, required_level: 80, gap: 20, category: 'Technical' },
-    { skill_name: 'Python', current_level: 85, required_level: 80, gap: 0, category: 'Technical' },
-    { skill_name: 'Networking', current_level: 90, required_level: 95, gap: 5, category: 'Technical' }
-  ];
+
+  const GOAL_REQ_MAP = {
+    'Cybersecurity Analyst': { 'Networking': 95, 'Linux': 80, 'SIEM': 85, 'Incident Response': 85, 'Python': 75, 'SQL': 70 },
+    'Data Scientist': { 'Python': 95, 'SQL': 90, 'Machine Learning': 90, 'Statistics': 85, 'Data Visualization': 80, 'Deep Learning': 75 },
+    'Full Stack Developer': { 'JavaScript': 90, 'React': 90, 'Node.js': 85, 'Python': 80, 'SQL': 80, 'HTML/CSS': 90 },
+    'Learn AI/ML & Prompt Engineering': { 'Python': 95, 'PyTorch/TensorFlow': 90, 'Machine Learning': 90, 'LLMs & RAG': 90, 'Prompt Engineering': 85 },
+    'Prepare for Technical Placements': { 'Data Structures & Algorithms': 95, 'System Design': 85, 'Java': 85, 'C++': 85, 'SQL': 80 },
+    'Build an AI Startup': { 'Python': 90, 'LLMs & RAG': 90, 'Full Stack Architecture': 85, 'System Design': 85, 'DevOps & Cloud': 80 }
+  };
+
+  const getDynamicSkills = () => {
+    if (skillGapData && skillGapData.skills && skillGapData.skills.length > 0) {
+      return skillGapData.skills;
+    }
+    const reqs = GOAL_REQ_MAP[goalName] || GOAL_REQ_MAP['Full Stack Developer'];
+    return Object.entries(reqs).map(([sName, reqVal]) => {
+      const currVal = profile?.existing_skills?.[sName] || 25;
+      const gap = max(0, reqVal - currVal);
+      return {
+        skill_name: sName,
+        current_level: currVal,
+        required_level: reqVal,
+        gap: gap,
+        category: 'Technical'
+      };
+    });
+  };
+
+  const max = (a, b) => (a > b ? a : b);
+  const skills = getDynamicSkills();
 
   const gapSkills = skills.filter(s => s.gap > 0);
   const masteredSkills = skills.filter(s => s.gap === 0);

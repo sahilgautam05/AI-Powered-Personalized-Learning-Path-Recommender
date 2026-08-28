@@ -177,9 +177,28 @@ export default function Dashboard({ profile, learningPath, recommendations, onNa
               <span className="match-num">{nextRecommendation.match_score || 95}%</span>
               <span className="match-text">Match Score</span>
             </div>
-            <button className="btn btn-primary btn-lg next-start-btn" onClick={() => onOpenResource ? onOpenResource(nextRecommendation) : onNavigate('learning-path')}>
-              Start Learning Now <ArrowRight size={18} />
-            </button>
+            <div className="next-buttons-group">
+              <button 
+                className="btn btn-primary btn-lg next-start-btn" 
+                onClick={() => {
+                  if (nextRecommendation.url && nextRecommendation.url !== '#') {
+                    window.open(nextRecommendation.url, '_blank', 'noopener,noreferrer');
+                  } else if (onOpenResource) {
+                    onOpenResource(nextRecommendation);
+                  } else {
+                    onNavigate('learning-path');
+                  }
+                }}
+              >
+                Start Learning Now ↗
+              </button>
+              <button 
+                className="btn btn-secondary btn-sm"
+                onClick={() => onOpenResource && onOpenResource(nextRecommendation)}
+              >
+                View Syllabus Details
+              </button>
+            </div>
           </div>
         </div>
       </div>

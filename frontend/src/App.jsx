@@ -254,6 +254,8 @@ export default function App() {
                   learningPath={learningPath}
                   onOpenAssessment={(quizId) => setActiveAssessmentId(quizId)}
                   onOpenResource={(res) => setSelectedResourceForModal(res)}
+                  completedResourceIds={completedResourceIds}
+                  onMarkComplete={(resId, skills) => handleMarkComplete(resId, skills)}
                 />
               )}
 
