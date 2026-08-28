@@ -2,8 +2,8 @@ import React from 'react';
 import { Clock, BarChart, Sparkles, ExternalLink, CheckCircle } from 'lucide-react';
 import './RecommendationCard.css';
 
-export default function RecommendationCard({ resource, onSelect, isCompleted = false }) {
-  const { title, type, difficulty, duration_hours, skills, match_score, why_recommended, description } = resource;
+export default function RecommendationCard({ resource, onSelect, isCompleted = false, onMarkComplete }) {
+  const { id, title, type, difficulty, duration_hours, skills, match_score, why_recommended, description, url } = resource;
 
   const getBadgeClass = (resType) => {
     switch (resType.toLowerCase()) {
@@ -19,8 +19,14 @@ export default function RecommendationCard({ resource, onSelect, isCompleted = f
       <div className="card-top-bar">
         <span className={`badge ${getBadgeClass(type)}`}>{type}</span>
         <div className="match-score-pill">
-          <Sparkles size={14} className="sparkle-icon" />
-          <span>{match_score || 92}% Match</span>
+          {isCompleted ? (
+            <span className="completed-tag"><CheckCircle size={14} /> Completed</span>
+          ) : (
+            <>
+              <Sparkles size={14} className="sparkle-icon" />
+              <span>{match_score || 92}% Match</span>
+            </>
+          )}
         </div>
       </div>
 
@@ -53,30 +59,33 @@ export default function RecommendationCard({ resource, onSelect, isCompleted = f
 
       <div className="card-footer-action">
         <button 
-          className={`btn ${isCompleted ? 'btn-secondary' : 'btn-primary'} btn-sm card-btn`}
+          className="btn btn-outline btn-sm card-btn"
           onClick={() => onSelect && onSelect(resource)}
         >
-          {isCompleted ? (
-            <>
-              <CheckCircle size={15} /> Completed
-            </>
-          ) : (
-            <>
-              Explore Details
-            </>
-          )}
+          Explore Details
         </button>
         
         <button 
-          className="btn btn-secondary btn-sm card-btn"
+          className="btn btn-primary btn-sm card-btn"
           onClick={(e) => {
             e.stopPropagation();
-            const targetUrl = (resource.url && resource.url !== '#') ? resource.url : `https://www.google.com/search?q=${encodeURIComponent(title + ' free course tutorial')}`;
+            const targetUrl = (url && url !== '#') ? url : `https://www.google.com/search?q=${encodeURIComponent(title + ' free course tutorial video')}`;
             window.open(targetUrl, '_blank', 'noopener,noreferrer');
           }}
-          title="Open authentic learning platform in new tab"
+          title="Watch authentic video / open platform in new tab"
         >
           Start Learning <ExternalLink size={14} />
+        </button>
+
+        <button
+          className={`btn ${isCompleted ? 'btn-success' : 'btn-secondary'} btn-sm card-btn`}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (onMarkComplete) onMarkComplete(id, skills || []);
+          }}
+          title="Mark course as completed to update readiness progress"
+        >
+          <CheckCircle size={14} /> {isCompleted ? 'Done ✓' : 'Mark Complete'}
         </button>
       </div>
     </div>

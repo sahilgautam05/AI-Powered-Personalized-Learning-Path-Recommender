@@ -51,24 +51,29 @@ export default function App() {
   const [learningPath, setLearningPath] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
   const [skillGapData, setSkillGapData] = useState(null);
+  const [completedResourceIds, setCompletedResourceIds] = useState(new Set());
 
   // Load Data on Startup
   useEffect(() => {
     async function loadInitialData() {
       try {
-        const [profData, pathData, recData, gapData] = await Promise.all([
+        const [profData, pathData, recData, gapData, compData] = await Promise.all([
           api.getProfile('demo_learner_01').catch(() => null),
           api.getLearningPath('demo_learner_01').catch(() => null),
           api.getRecommendations('demo_learner_01', 10).catch(() => []),
-          api.getSkillGap(profile).catch(() => null)
+          api.getSkillGap({ user_id: 'demo_learner_01' }).catch(() => null),
+          api.getCompletedResources('demo_learner_01').catch(() => ({ completed_resource_ids: [] }))
         ]);
 
         if (profData) setProfile(profData);
         if (pathData) setLearningPath(pathData);
         if (recData && recData.length > 0) setRecommendations(recData);
         if (gapData) setSkillGapData(gapData);
+        if (compData && compData.completed_resource_ids) {
+          setCompletedResourceIds(new Set(compData.completed_resource_ids));
+        }
       } catch (err) {
-        console.warn("API offline, using mock seed data:", err);
+        console.warn("Initial data load error:", err);
       }
     }
     loadInitialData();
@@ -87,6 +92,7 @@ export default function App() {
     setLearningPath(null);
     setRecommendations([]);
     setSkillGapData(null);
+    setCompletedResourceIds(new Set());
     setActiveTab('login');
   };
 
@@ -94,36 +100,71 @@ export default function App() {
     try {
       const demoProf = await api.getProfile('demo_learner_01');
       if (demoProf) setProfile(demoProf);
-      const [pathData, recData, gapData] = await Promise.all([
+      const [pathData, recData, gapData, compData] = await Promise.all([
         api.getLearningPath('demo_learner_01').catch(() => null),
         api.getRecommendations('demo_learner_01', 10).catch(() => []),
-        api.getSkillGap(demoProf || profile).catch(() => null)
+        api.getSkillGap(demoProf || profile).catch(() => null),
+        api.getCompletedResources('demo_learner_01').catch(() => ({ completed_resource_ids: [] }))
       ]);
       if (pathData) setLearningPath(pathData);
       if (recData && recData.length > 0) setRecommendations(recData);
       if (gapData) setSkillGapData(gapData);
+      if (compData && compData.completed_resource_ids) {
+        setCompletedResourceIds(new Set(compData.completed_resource_ids));
+      }
     } catch (err) {}
     setActiveTab('dashboard');
   };
 
   const handleNewUserSignUp = (userProf) => {
     setProfile(userProf);
+    setCompletedResourceIds(new Set());
     setActiveTab('onboarding');
   };
 
   const handleStandardLoginSuccess = async (userProf) => {
     setProfile(userProf);
     try {
-      const [pathData, recData, gapData] = await Promise.all([
+      const [pathData, recData, gapData, compData] = await Promise.all([
         api.getLearningPath(userProf.user_id).catch(() => null),
         api.getRecommendations(userProf.user_id, 10).catch(() => []),
-        api.getSkillGap(userProf).catch(() => null)
+        api.getSkillGap(userProf).catch(() => null),
+        api.getCompletedResources(userProf.user_id).catch(() => ({ completed_resource_ids: [] }))
       ]);
       if (pathData) setLearningPath(pathData);
       if (recData && recData.length > 0) setRecommendations(recData);
       if (gapData) setSkillGapData(gapData);
+      if (compData && compData.completed_resource_ids) {
+        setCompletedResourceIds(new Set(compData.completed_resource_ids));
+      }
     } catch (err) {}
     setActiveTab('dashboard');
+  };
+
+  const handleMarkComplete = async (resourceId, skillsGained = []) => {
+    setCompletedResourceIds(prev => new Set([...prev, resourceId]));
+
+    try {
+      const res = await api.completeResource(profile.user_id, resourceId, skillsGained);
+      if (res && res.profile) {
+        setProfile(res.profile);
+      }
+      const [pathData, recData, gapData] = await Promise.all([
+        api.getLearningPath(profile.user_id).catch(() => null),
+        api.getRecommendations(profile.user_id, 10).catch(() => []),
+        api.getSkillGap(res?.profile || profile).catch(() => null)
+      ]);
+      if (pathData) {
+        if (res && res.overall_progress) {
+          pathData.overall_progress = res.overall_progress;
+        }
+        setLearningPath(pathData);
+      }
+      if (recData && recData.length > 0) setRecommendations(recData);
+      if (gapData) setSkillGapData(gapData);
+    } catch (err) {
+      console.warn("Resource completion sync error:", err);
+    }
   };
 
   const handleOnboardingComplete = async (newProfile) => {
@@ -220,6 +261,8 @@ export default function App() {
                 <ExplorePage 
                   recommendations={recommendations}
                   onSelectResource={(res) => setSelectedResourceForModal(res)}
+                  completedResourceIds={completedResourceIds}
+                  onMarkComplete={(resId, skills) => handleMarkComplete(resId, skills)}
                 />
               )}
 
@@ -267,6 +310,8 @@ export default function App() {
           resource={selectedResourceForModal}
           isOpen={!!selectedResourceForModal}
           onClose={() => setSelectedResourceForModal(null)}
+          onMarkComplete={(resId) => handleMarkComplete(resId, selectedResourceForModal?.skills || [])}
+          isCompleted={completedResourceIds.has(selectedResourceForModal.id)}
         />
       )}
     </div>

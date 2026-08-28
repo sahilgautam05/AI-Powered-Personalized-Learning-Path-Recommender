@@ -3,7 +3,7 @@ import { Search, Filter, Sparkles } from 'lucide-react';
 import RecommendationCard from '../components/RecommendationCard';
 import './ExplorePage.css';
 
-export default function ExplorePage({ recommendations, onSelectResource }) {
+export default function ExplorePage({ recommendations, onSelectResource, completedResourceIds = new Set(), onMarkComplete }) {
   const [filterType, setFilterType] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -53,6 +53,8 @@ export default function ExplorePage({ recommendations, onSelectResource }) {
             key={res.id}
             resource={res}
             onSelect={onSelectResource}
+            isCompleted={completedResourceIds.has(res.id)}
+            onMarkComplete={onMarkComplete}
           />
         ))}
       </div>

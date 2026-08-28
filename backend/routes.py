@@ -583,3 +583,63 @@ def fetch_user_notifications(user_id: str = "demo_learner_01"):
             target_tab="skillgap"
         )
     ]
+
+# 13. Resource Completion Endpoint
+class CompleteResourceRequest(BaseModel):
+    user_id: str = "demo_learner_01"
+    resource_id: str
+    skills_gained: List[str] = []
+
+@router.post("/complete-resource")
+def complete_resource(req: CompleteResourceRequest):
+    user_id = req.user_id
+    profile = get_user_profile(user_id)
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # 1. Persist completed resource in SQLite user_completed_resources table
+    cursor.execute("""
+        INSERT INTO user_completed_resources (user_id, resource_id)
+        VALUES (?, ?)
+        ON CONFLICT(user_id, resource_id) DO NOTHING
+    """, (user_id, req.resource_id))
+
+    # 2. Boost user skills associated with this resource by +15%
+    skills_to_boost = req.skills_gained
+    if not skills_to_boost:
+        skills_to_boost = list(get_goal_requirements(profile.goal).keys())[:2]
+
+    for s_name in skills_to_boost:
+        curr_lvl = profile.existing_skills.get(s_name, 40)
+        new_lvl = min(100, curr_lvl + 15)
+        cursor.execute("""
+            INSERT INTO user_skills (user_id, skill_name, level)
+            VALUES (?, ?, ?)
+            ON CONFLICT(user_id, skill_name) DO UPDATE SET level = excluded.level
+        """, (user_id, s_name, new_lvl))
+        
+    conn.commit()
+    conn.close()
+
+    # Get updated profile & recalculate overall progress
+    updated_profile = get_user_profile(user_id)
+    overall_progress = compute_user_overall_progress(updated_profile)
+    
+    return {
+        "status": "success",
+        "message": f"Resource {req.resource_id} marked as completed!",
+        "profile": updated_profile,
+        "overall_progress": overall_progress
+    }
+
+@router.get("/user-completed-resources/{user_id}")
+def get_user_completed_resources(user_id: str):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT resource_id FROM user_completed_resources WHERE user_id = ?", (user_id,))
+    rows = cursor.fetchall()
+    conn.close()
+    return {"completed_resource_ids": [r["resource_id"] for r in rows]}
+
+

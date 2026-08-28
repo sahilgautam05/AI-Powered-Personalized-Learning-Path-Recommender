@@ -37,5 +37,7 @@ export const api = {
   getProgress: (userId = 'sahil_01') => fetchApi(`/progress?user_id=${userId}`),
   getResources: () => fetchApi(`/resources`),
   getNotifications: (userId = 'sahil_01') => fetchApi(`/notifications?user_id=${userId}`),
+  completeResource: (userId, resourceId, skillsGained = []) => fetchApi(`/complete-resource`, { method: 'POST', body: JSON.stringify({ user_id: userId, resource_id: resourceId, skills_gained: skillsGained }) }),
+  getCompletedResources: (userId) => fetchApi(`/user-completed-resources/${userId}`),
   submitFeedback: (userId, resourceId, rating, comment) => fetchApi(`/feedback`, { method: 'POST', body: JSON.stringify({ user_id: userId, resource_id: resourceId, rating, comment }) })
 };

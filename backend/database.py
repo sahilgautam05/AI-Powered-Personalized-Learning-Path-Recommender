@@ -48,6 +48,16 @@ def init_db():
     )
     """)
 
+    # User Completed Resources Table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS user_completed_resources (
+        user_id TEXT NOT NULL,
+        resource_id TEXT NOT NULL,
+        completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (user_id, resource_id)
+    )
+    """)
+
     # Resources Table
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS resources (
