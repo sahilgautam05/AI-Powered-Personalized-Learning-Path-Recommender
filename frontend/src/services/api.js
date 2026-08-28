@@ -39,8 +39,22 @@ export const api = {
   getSkillGap: (profile) => fetchApi(`/skill-gap`, { method: 'POST', body: JSON.stringify(profile || {}) }),
   getRecommendations: (userId = 'sahil_01', limit = 6) => fetchApi(`/recommendations`, { method: 'POST', body: JSON.stringify({ user_id: userId, limit }) }),
   getLearningPath: (userId = 'sahil_01') => fetchApi(`/learning-path`, { method: 'POST', body: JSON.stringify({ user_id: userId }) }),
-  getAssessment: (assessmentId) => fetchApi(`/assessment/${assessmentId}`),
-  submitAssessment: (userId, assessmentId, answers) => fetchApi(`/assessment`, { method: 'POST', body: JSON.stringify({ user_id: userId, assessment_id: assessmentId, answers }) }),
+  getAssessment: async (assessmentId) => {
+    try {
+      return await fetchApi(`/assessment/${assessmentId}`);
+    } catch (err) {
+      console.warn(`Backend quiz unavailable, generating goal-specific quiz for ${assessmentId}:`, err);
+      return generateGoalSpecificQuiz(assessmentId);
+    }
+  },
+  submitAssessment: async (userId, assessmentId, answers) => {
+    try {
+      return await fetchApi(`/assessment`, { method: 'POST', body: JSON.stringify({ user_id: userId, assessment_id: assessmentId, answers }) });
+    } catch (err) {
+      console.warn('Backend quiz submit unavailable, calculating local quiz evaluation:', err);
+      return evaluateLocalQuiz(assessmentId, answers);
+    }
+  },
   sendChatMessage: async (userId, message) => {
     try {
       return await fetchApi(`/chat`, { method: 'POST', body: JSON.stringify({ user_id: userId, message }) });
@@ -105,5 +119,74 @@ export function generateLocalAiReply(prompt, profile) {
       `Show my learning roadmap`,
       `Help me plan my study schedule`
     ]
+  };
+}
+
+export function generateGoalSpecificQuiz(assessmentId = 'quiz_03', userGoal = 'Full Stack Developer') {
+  const gLower = (userGoal || '').toLowerCase();
+  const isCyber = gLower.includes('cyber') || gLower.includes('sec');
+  
+  const QUIZ_MAP = {
+    quiz_01: {
+      id: "quiz_01",
+      title: isCyber ? "Module 01 — Computer Networking & Protocol Security Quiz" : "Module 01 — Modern HTML5, CSS3 & Responsive Design Quiz",
+      description: isCyber ? "Verify your knowledge of TCP/IP layers, port numbers, DNS resolution, and packet headers." : "Verify your knowledge of semantic HTML5 tags, CSS Flexbox, Grid layout math, and responsive design.",
+      skill_tag: isCyber ? "Networking" : "HTML/CSS",
+      questions: isCyber ? [
+        { id: 1, question: "Which OSI layer is responsible for end-to-end packet delivery using IP addresses?", options: ["Layer 2 - Data Link", "Layer 3 - Network", "Layer 4 - Transport", "Layer 7 - Application"], correct_option: 1, explanation: "Layer 3 (Network Layer) uses IP addresses to route packets across logical networks.", skill_tag: "Networking" },
+        { id: 2, question: "What is the standard port number for HTTPS secure web traffic?", options: ["80", "22", "443", "53"], correct_option: 2, explanation: "Port 443 is used for TLS/SSL encrypted HTTPS communication.", skill_tag: "Networking" },
+        { id: 3, question: "During a TCP 3-way handshake, what flag combination is sent back by the server?", options: ["SYN", "SYN-ACK", "ACK-FIN", "RST"], correct_option: 1, explanation: "The server responds to SYN with SYN-ACK before client sends final ACK.", skill_tag: "Networking" }
+      ] : [
+        { id: 1, question: "Which CSS layout property is best suited for 1-dimensional flex layouts?", options: ["display: grid", "display: flex", "position: absolute", "float: left"], correct_option: 1, explanation: "Flexbox (display: flex) is optimized for 1D row or column layouts.", skill_tag: "HTML/CSS" },
+        { id: 2, question: "Which HTML5 element should be used for independent self-contained content like blog posts?", options: ["<section>", "<div>", "<article>", "<aside>"], correct_option: 2, explanation: "<article> represents standalone reusable content.", skill_tag: "HTML/CSS" },
+        { id: 3, question: "What does rem unit in CSS stand for?", options: ["Relative Element Margin", "Root EM (font size of <html>)", "Responsive Element Measurement", "Real EM"], correct_option: 1, explanation: "rem is relative to the font-size of the root <html> element.", skill_tag: "HTML/CSS" }
+      ]
+    },
+    quiz_02: {
+      id: "quiz_02",
+      title: isCyber ? "Module 02 — Linux CLI & Permissions Verification Quiz" : "Module 02 — Modern JavaScript ES6+ & Async Quiz",
+      description: isCyber ? "Test your command line fluency, file permission modes, systemctl, and bash scripting." : "Test your knowledge of JS Promises, Async/Await, ES6 modules, and Closure scope.",
+      skill_tag: isCyber ? "Linux" : "JavaScript",
+      questions: isCyber ? [
+        { id: 1, question: "Which numeric permission value corresponds to rwxr-xr--?", options: ["755", "754", "644", "777"], correct_option: 1, explanation: "rwx=7, r-x=5, r--=4, giving 754 permission mode.", skill_tag: "Linux" },
+        { id: 2, question: "Which command lists all listening TCP and UDP sockets with process names?", options: ["ls -la", "netstat -tulnp", "chmod +x", "ps aux"], correct_option: 1, explanation: "netstat -tulnp or ss -tulnp lists open listening ports and process PIDs.", skill_tag: "Linux" }
+      ] : [
+        { id: 1, question: "What will console.log(typeof null) output in JavaScript?", options: ["null", "undefined", "object", "number"], correct_option: 2, explanation: "In JS, typeof null is a legacy bug returning 'object'.", skill_tag: "JavaScript" },
+        { id: 2, question: "Which method is used to execute code after a Promise resolves successfully?", options: [".catch()", ".then()", ".finally()", ".async()"], correct_option: 1, explanation: "Promise.then() handles successful fulfillment values.", skill_tag: "JavaScript" }
+      ]
+    },
+    quiz_03: {
+      id: "quiz_03",
+      title: isCyber ? "Module 03 — Wireshark & SIEM Log Analysis Verification Quiz" : "Module 03 — React 18 Components & State Quiz",
+      description: isCyber ? "Verify your skill in packet dissection, Wireshark filters, and Splunk log ingestion queries." : "Verify your skill in React JSX, useState, useEffect lifecycle, and component prop passing.",
+      skill_tag: isCyber ? "SIEM" : "React",
+      questions: isCyber ? [
+        { id: 1, question: "In Wireshark, which display filter isolates HTTP POST request methods?", options: ["http.request.method == 'POST'", "tcp.port == 80", "ip.addr == 192.168.1.1", "dns.flags"], correct_option: 0, explanation: "http.request.method == 'POST' filters HTTP POST requests.", skill_tag: "SIEM" },
+        { id: 2, question: "What is the primary function of a SIEM system in a Security Operations Center (SOC)?", options: ["Encrypt hard drives", "Aggregate, correlate, and alert on log data", "Compile C++ code", "Format hard disks"], correct_option: 1, explanation: "SIEM aggregates logs from endpoints, firewalls, and servers to generate security alerts.", skill_tag: "SIEM" }
+      ] : [
+        { id: 1, question: "In React, which hook is used to perform side effects like data fetching?", options: ["useState", "useEffect", "useContext", "useReducer"], correct_option: 1, explanation: "useEffect runs side-effects after component render cycles.", skill_tag: "React" },
+        { id: 2, question: "Why must React keys be unique when rendering lists?", options: ["For CSS styling", "To help React reconcile DOM nodes efficiently", "To prevent memory leaks", "Keys are optional"], correct_option: 1, explanation: "Keys give elements a stable identity so React can track additions and deletions.", skill_tag: "React" }
+      ]
+    }
+  };
+
+  return QUIZ_MAP[assessmentId] || QUIZ_MAP["quiz_03"];
+}
+
+export function evaluateLocalQuiz(assessmentId, answers) {
+  const quiz = generateGoalSpecificQuiz(assessmentId);
+  let correct = 0;
+  quiz.questions.forEach(q => {
+    if (answers[q.id] === q.correct_option) correct++;
+  });
+  const score = Math.round((correct / Math.max(1, quiz.questions.length)) * 100);
+  const passed = score >= 70;
+  return {
+    assessment_id: assessmentId,
+    score: score,
+    passed: passed,
+    strong_areas: passed ? [quiz.skill_tag] : [],
+    weak_areas: passed ? [] : [quiz.skill_tag],
+    recommended_action: passed ? `Congratulations! You scored ${score}% and demonstrated strong proficiency in ${quiz.skill_tag}.` : `Your score of ${score}% is below target 70%. We recommend reviewing key concepts in ${quiz.skill_tag} before re-evaluating.`
   };
 }

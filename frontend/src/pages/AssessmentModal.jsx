@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Award, CheckCircle2, AlertTriangle, X, ArrowRight, RefreshCw, Sparkles } from 'lucide-react';
-import { api } from '../services/api';
+import { api, generateGoalSpecificQuiz } from '../services/api';
 import './AssessmentModal.css';
 
-export default function AssessmentModal({ assessmentId, onClose, onComplete }) {
+export default function AssessmentModal({ assessmentId, onClose, onComplete, profile }) {
   const [assessment, setAssessment] = useState(null);
   const [userAnswers, setUserAnswers] = useState({});
   const [result, setResult] = useState(null);
@@ -15,15 +15,20 @@ export default function AssessmentModal({ assessmentId, onClose, onComplete }) {
       try {
         setLoading(true);
         const data = await api.getAssessment(assessmentId || 'quiz_03');
-        setAssessment(data);
+        if (data && data.questions && data.questions.length > 0) {
+          setAssessment(data);
+        } else {
+          setAssessment(generateGoalSpecificQuiz(assessmentId || 'quiz_03', profile?.goal));
+        }
       } catch (err) {
-        console.error(err);
+        console.warn("Using goal-specific fallback quiz:", err);
+        setAssessment(generateGoalSpecificQuiz(assessmentId || 'quiz_03', profile?.goal));
       } finally {
         setLoading(false);
       }
     }
     loadQuiz();
-  }, [assessmentId]);
+  }, [assessmentId, profile]);
 
   const selectOption = (qId, optionIdx) => {
     if (result) return; // Locked after submitting
