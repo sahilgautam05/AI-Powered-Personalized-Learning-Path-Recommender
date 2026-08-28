@@ -12,6 +12,7 @@ import ExplorePage from './pages/ExplorePage';
 import AssessmentModal from './pages/AssessmentModal';
 import LoginPage from './pages/LoginPage';
 import ProfilePage from './pages/ProfilePage';
+import WeeklyTasksPage from './pages/WeeklyTasksPage';
 import ResourceModal from './components/ResourceModal';
 
 import { api } from './services/api';
@@ -256,6 +257,13 @@ export default function App() {
                   onOpenResource={(res) => setSelectedResourceForModal(res)}
                   completedResourceIds={completedResourceIds}
                   onMarkComplete={(resId, skills) => handleMarkComplete(resId, skills)}
+                />
+              )}
+
+              {activeTab === 'weekly_tasks' && (
+                <WeeklyTasksPage 
+                  profile={profile}
+                  onOpenResource={(res) => setSelectedResourceForModal(res)}
                 />
               )}
 

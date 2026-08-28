@@ -1,5 +1,5 @@
 import React from 'react';
-import { Target, Award, ArrowRight, Play, CheckCircle2, AlertTriangle, Sparkles, Bot, Search, Zap, BarChart2 } from 'lucide-react';
+import { Target, Award, ArrowRight, Play, CheckCircle2, AlertTriangle, Sparkles, Bot, Search, Zap, BarChart2, Flame } from 'lucide-react';
 import RecommendationCard from '../components/RecommendationCard';
 import './Dashboard.css';
 
@@ -102,6 +102,10 @@ export default function Dashboard({ profile, learningPath, recommendations, onNa
 
       {/* Quick Action Navigation Hub */}
       <div className="dashboard-shortcuts-row">
+        <div className="shortcut-btn-card" onClick={() => onNavigate('weekly_tasks')}>
+          <Flame size={18} className="icon icon-danger" style={{ color: '#ef4444' }} />
+          <span>Adaptive Weekly Challenges 🎯</span>
+        </div>
         <div className="shortcut-btn-card" onClick={() => onNavigate('explore')}>
           <Search size={18} className="icon icon-primary" />
           <span>Explore 100+ Resources</span>

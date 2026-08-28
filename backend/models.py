@@ -135,3 +135,22 @@ class NotificationItem(BaseModel):
     type: str = "recommendation"
     read: bool = False
     target_tab: str = "dashboard"
+
+class WeeklyTaskItem(BaseModel):
+    task_id: str
+    week_number: int
+    title: str
+    category: str
+    difficulty_level: str # Beginner, Intermediate, Advanced
+    performance_score: int
+    description: str
+    objectives: List[str] = Field(default_factory=list)
+    starter_code: Optional[str] = ""
+    verification_hint: str = ""
+    xp_reward: int = 150
+    is_completed: bool = False
+
+class WeeklyTaskSubmitRequest(BaseModel):
+    user_id: str = "sahil_01"
+    task_id: str
+    submission_code: str

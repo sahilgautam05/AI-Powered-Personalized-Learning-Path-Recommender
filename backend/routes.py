@@ -9,7 +9,8 @@ from backend.models import (
     LearnerProfile, GoalAnalysisRequest, SkillGapResponse, SkillGapItem,
     RecommendationRequest, ResourceItem, LearningPathResponse, PhaseModule,
     AssessmentDetail, AssessmentQuestion, AssessmentSubmit, AssessmentResult,
-    FeedbackSubmit, ChatRequest, ChatResponse, LoginRequest, RegisterRequest, NotificationItem
+    FeedbackSubmit, ChatRequest, ChatResponse, LoginRequest, RegisterRequest, NotificationItem,
+    WeeklyTaskItem, WeeklyTaskSubmitRequest
 )
 from backend.recommender import rank_resources, calculate_recommendation_score, GOAL_SKILL_REQUIREMENTS, get_goal_requirements
 from backend.ai_service import generate_ai_chat_response
@@ -642,5 +643,232 @@ def get_user_completed_resources(user_id: str):
     rows = cursor.fetchall()
     conn.close()
     return {"completed_resource_ids": [r["resource_id"] for r in rows]}
+
+# Adaptive Weekly Tasks Catalog Generator
+def get_adaptive_weekly_task(user_id: str, goal: str, performance_score: int, completed_ids: set) -> WeeklyTaskItem:
+    g_lower = (goal or "").lower()
+    is_cyber = "cyber" in g_lower or "sec" in g_lower
+
+    if performance_score < 60:
+        difficulty = "Beginner"
+        xp = 150
+    elif performance_score < 80:
+        difficulty = "Intermediate"
+        xp = 300
+    else:
+        difficulty = "Advanced"
+        xp = 500
+
+    if is_cyber:
+        if difficulty == "Beginner":
+            return WeeklyTaskItem(
+                task_id="wt_cyber_01",
+                week_number=1,
+                title="Weekly Challenge: Configure Linux User Groups & File Permissions",
+                category="Cybersecurity & Linux",
+                difficulty_level="Beginner",
+                performance_score=performance_score,
+                description="Secure a multi-user Linux environment by creating user groups, restricting read/write access to sensitive log files (/var/log/auth.log), and assigning 750 permissions.",
+                objectives=[
+                    "Create a security group named 'soc_analysts'",
+                    "Set /var/log/auth.log permissions to rwxr-x--- (750)",
+                    "Verify file ownership using ls -l"
+                ],
+                starter_code="# Bash Script Starter\nsudo groupadd soc_analysts\nsudo chown root:soc_analysts /var/log/auth.log\nsudo chmod 750 /var/log/auth.log",
+                verification_hint="Use chmod 750 and chown to assign permissions.",
+                xp_reward=150,
+                is_completed="wt_cyber_01" in completed_ids
+            )
+        elif difficulty == "Intermediate":
+            return WeeklyTaskItem(
+                task_id="wt_cyber_02",
+                week_number=2,
+                title="Weekly Challenge: Wireshark PCAP Traffic Analysis & SYN Flood Filter",
+                category="Cybersecurity & Wireshark",
+                difficulty_level="Intermediate",
+                performance_score=performance_score,
+                description="Analyze a live packet capture file to identify an ongoing SYN flood Denial-of-Service attack. Write display filters to isolate suspicious source IPs.",
+                objectives=[
+                    "Isolate TCP SYN packets with no ACK flag",
+                    "Identify top 3 attacking IP addresses",
+                    "Construct Splunk SPL query to alert on SYN anomalies"
+                ],
+                starter_code="# Wireshark Display Filter\ntcp.flags.syn == 1 and tcp.flags.ack == 0",
+                verification_hint="Use tcp.flags.syn == 1 and tcp.flags.ack == 0 display filter.",
+                xp_reward=300,
+                is_completed="wt_cyber_02" in completed_ids
+            )
+        else:
+            return WeeklyTaskItem(
+                task_id="wt_cyber_03",
+                week_number=3,
+                title="Weekly Challenge: Automated Incident Response Triage Script",
+                category="Cybersecurity & Python Automation",
+                difficulty_level="Advanced",
+                performance_score=performance_score,
+                description="Build a Python script that automatically parses Splunk CSV alert logs, flags IP addresses with >50 failed logons (EventCode 4625), and generates an executive JSON incident report.",
+                objectives=[
+                    "Parse CSV log input using Python csv/pandas",
+                    "Identify brute force IPs with >50 failed logons",
+                    "Export JSON incident summary report"
+                ],
+                starter_code="import csv, json\n# Write Python log parser here",
+                verification_hint="Parse CSV and filter TargetUserName counts > 50.",
+                xp_reward=500,
+                is_completed="wt_cyber_03" in completed_ids
+            )
+    else:
+        if difficulty == "Beginner":
+            return WeeklyTaskItem(
+                task_id="wt_fs_01",
+                week_number=1,
+                title="Weekly Challenge: Responsive Navbar with CSS Flexbox & Variables",
+                category="Full Stack & Frontend",
+                difficulty_level="Beginner",
+                performance_score=performance_score,
+                description="Construct a clean, responsive navigation bar using CSS Flexbox, custom CSS root variables for themes, and mobile media queries.",
+                objectives=[
+                    "Use flexbox space-between layout",
+                    "Implement :root CSS variables for theme colors",
+                    "Add mobile hamburger toggle media query"
+                ],
+                starter_code="/* CSS Starter */\n:root {\n  --primary: #4f46e5;\n}\n.navbar {\n  display: flex;\n  justify-content: space-between;\n}",
+                verification_hint="Ensure display: flex and justify-content: space-between are defined.",
+                xp_reward=150,
+                is_completed="wt_fs_01" in completed_ids
+            )
+        elif difficulty == "Intermediate":
+            return WeeklyTaskItem(
+                task_id="wt_fs_02",
+                week_number=2,
+                title="Weekly Challenge: React 18 Custom Hook for REST Data Fetching",
+                category="Full Stack & React",
+                difficulty_level="Intermediate",
+                performance_score=performance_score,
+                description="Build a reusable `useFetch(url)` custom React hook that manages data, loading state, and error handling for API requests.",
+                objectives=[
+                    "Create useFetch custom hook returning { data, loading, error }",
+                    "Handle abort controller cancellation on unmount",
+                    "Integrate error boundary try/catch"
+                ],
+                starter_code="import { useState, useEffect } from 'react';\nexport function useFetch(url) {\n  const [data, setData] = useState(null);\n  // Implement fetch logic here\n}",
+                verification_hint="Return object with { data, loading, error } from hook.",
+                xp_reward=300,
+                is_completed="wt_fs_02" in completed_ids
+            )
+        else:
+            return WeeklyTaskItem(
+                task_id="wt_fs_03",
+                week_number=3,
+                title="Weekly Challenge: Express REST API Rate Limiting & JWT Auth Middleware",
+                category="Full Stack & Backend",
+                difficulty_level="Advanced",
+                performance_score=performance_score,
+                description="Implement an Express.js backend middleware that enforces rate limiting (100 req/15min) and verifies JWT tokens in Authorization headers.",
+                objectives=[
+                    "Build JWT bearer token verification middleware",
+                    "Implement sliding window rate limiting",
+                    "Return HTTP 429 Too Many Requests on limit breach"
+                ],
+                starter_code="const jwt = require('jsonwebtoken');\nfunction authMiddleware(req, res, next) {\n  // Implement JWT verification\n}",
+                verification_hint="Check req.headers.authorization and verify JWT token.",
+                xp_reward=500,
+                is_completed="wt_fs_03" in completed_ids
+            )
+
+# Weekly Task Endpoints
+@router.get("/weekly-task/{user_id}")
+def get_user_weekly_task(user_id: str):
+    profile = get_user_profile(user_id)
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT * FROM user_weekly_tasks WHERE user_id = ?", (user_id,))
+    row = cursor.fetchone()
+    
+    if not row:
+        cursor.execute("""
+            INSERT INTO user_weekly_tasks (user_id, current_week, difficulty_level, performance_score, completed_task_ids)
+            VALUES (?, 1, 'Beginner', 45, '[]')
+        """, (user_id,))
+        conn.commit()
+        performance_score = 45
+        difficulty_level = "Beginner"
+        completed_ids = set()
+    else:
+        performance_score = row["performance_score"]
+        difficulty_level = row["difficulty_level"]
+        completed_ids = set(json.loads(row["completed_task_ids"]))
+        
+    conn.close()
+
+    task = get_adaptive_weekly_task(user_id, profile.goal, performance_score, completed_ids)
+    return {
+        "user_id": user_id,
+        "performance_score": performance_score,
+        "difficulty_level": difficulty_level,
+        "task": task
+    }
+
+@router.post("/weekly-task/submit")
+def submit_weekly_task(req: WeeklyTaskSubmitRequest):
+    user_id = req.user_id
+    task_id = req.task_id
+    code = req.submission_code
+    
+    profile = get_user_profile(user_id)
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM user_weekly_tasks WHERE user_id = ?", (user_id,))
+    row = cursor.fetchone()
+    
+    current_score = row["performance_score"] if row else 45
+    completed_ids = set(json.loads(row["completed_task_ids"])) if row else set()
+
+    new_score = min(100, current_score + 15)
+    
+    if new_score < 60:
+        new_difficulty = "Beginner"
+    elif new_score < 80:
+        new_difficulty = "Intermediate"
+    else:
+        new_difficulty = "Advanced"
+
+    completed_ids.add(task_id)
+
+    cursor.execute("""
+        INSERT INTO user_weekly_tasks (user_id, current_week, difficulty_level, performance_score, completed_task_ids)
+        VALUES (?, 1, ?, ?, ?)
+        ON CONFLICT(user_id) DO UPDATE SET 
+            performance_score = excluded.performance_score,
+            difficulty_level = excluded.difficulty_level,
+            completed_task_ids = excluded.completed_task_ids,
+            last_updated = CURRENT_TIMESTAMP
+    """, (user_id, new_difficulty, new_score, json.dumps(list(completed_ids))))
+
+    skills_to_boost = list(get_goal_requirements(profile.goal).keys())[:2]
+    for s_name in skills_to_boost:
+        curr_lvl = profile.existing_skills.get(s_name, 40)
+        new_lvl = min(100, curr_lvl + 15)
+        cursor.execute("""
+            INSERT INTO user_skills (user_id, skill_name, level)
+            VALUES (?, ?, ?)
+            ON CONFLICT(user_id, skill_name) DO UPDATE SET level = excluded.level
+        """, (user_id, s_name, new_lvl))
+
+    conn.commit()
+    conn.close()
+
+    leveled_up = new_difficulty != (row["difficulty_level"] if row else "Beginner")
+
+    return {
+        "status": "success",
+        "message": f"Weekly Challenge {task_id} completed successfully! Performance score increased by +15%.",
+        "new_performance_score": new_score,
+        "new_difficulty_level": new_difficulty,
+        "leveled_up": leveled_up,
+        "xp_earned": 300
+    }
 
 

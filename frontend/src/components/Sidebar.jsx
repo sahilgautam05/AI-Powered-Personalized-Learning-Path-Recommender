@@ -9,7 +9,8 @@ import {
   BarChart2, 
   User, 
   X,
-  Sparkles
+  Sparkles,
+  Flame
 } from 'lucide-react';
 import './Sidebar.css';
 
@@ -17,6 +18,7 @@ export default function Sidebar({ activeTab, setActiveTab, isMobileOpen, closeMo
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'learning-path', label: 'My Learning Path', icon: MapPin },
+    { id: 'weekly_tasks', label: 'Weekly Challenges', icon: Flame, badge: 'Adaptive' },
     { id: 'explore', label: 'Explore', icon: Compass },
     { id: 'ai-assistant', label: 'AI Assistant', icon: Bot, badge: 'AI' },
     { id: 'skill-gap', label: 'Skill Gap', icon: TrendingUp },

@@ -58,6 +58,18 @@ def init_db():
     )
     """)
 
+    # Adaptive User Weekly Tasks Table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS user_weekly_tasks (
+        user_id TEXT PRIMARY KEY,
+        current_week INTEGER DEFAULT 1,
+        difficulty_level TEXT DEFAULT 'Beginner', -- Beginner, Intermediate, Advanced
+        performance_score INTEGER DEFAULT 45, -- 0 to 100
+        completed_task_ids TEXT DEFAULT '[]',
+        last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+
     # Resources Table
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS resources (
