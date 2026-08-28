@@ -16,18 +16,18 @@ export default function Navbar({ activeTab, setActiveTab, toggleMobileSidebar, u
           setNotifications(notifData);
         } else {
           setNotifications([
-            { id: 'n1', title: '🎯 Goal Roadmap Activated', message: `Roadmap active for ${user?.goal || 'Full Stack Developer'}.`, time: '10m ago', read: false, target_tab: 'path' },
+            { id: 'n1', title: '🎯 Goal Roadmap Activated', message: `Roadmap active for ${user?.goal || 'Full Stack Developer'}.`, time: '10m ago', read: false, target_tab: 'learning-path' },
             { id: 'n2', title: '✨ AI Recommended Modules', message: '3 new personalized modules added to Explore.', time: '45m ago', read: false, target_tab: 'explore' },
             { id: 'n3', title: '📝 Milestone Knowledge Check', message: 'Phase 01 Assessment ready for evaluation.', time: '2h ago', read: false, target_tab: 'dashboard' },
-            { id: 'n4', title: '⚡ Skill Gap Opportunity', message: 'Bridge target gaps to boost readiness score by +15%.', time: '1d ago', read: true, target_tab: 'skillgap' }
+            { id: 'n4', title: '⚡ Skill Gap Opportunity', message: 'Bridge target gaps to boost readiness score by +15%.', time: '1d ago', read: true, target_tab: 'skill-gap' }
           ]);
         }
       } catch (err) {
         setNotifications([
-          { id: 'n1', title: '🎯 Goal Roadmap Activated', message: `Roadmap active for ${user?.goal || 'Full Stack Developer'}.`, time: '10m ago', read: false, target_tab: 'path' },
+          { id: 'n1', title: '🎯 Goal Roadmap Activated', message: `Roadmap active for ${user?.goal || 'Full Stack Developer'}.`, time: '10m ago', read: false, target_tab: 'learning-path' },
           { id: 'n2', title: '✨ AI Recommended Modules', message: '3 new personalized modules added to Explore.', time: '45m ago', read: false, target_tab: 'explore' },
           { id: 'n3', title: '📝 Milestone Knowledge Check', message: 'Phase 01 Assessment ready for evaluation.', time: '2h ago', read: false, target_tab: 'dashboard' },
-          { id: 'n4', title: '⚡ Skill Gap Opportunity', message: 'Bridge target gaps to boost readiness score by +15%.', time: '1d ago', read: true, target_tab: 'skillgap' }
+          { id: 'n4', title: '⚡ Skill Gap Opportunity', message: 'Bridge target gaps to boost readiness score by +15%.', time: '1d ago', read: true, target_tab: 'skill-gap' }
         ]);
       }
     }

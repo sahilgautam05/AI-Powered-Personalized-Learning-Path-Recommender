@@ -554,7 +554,7 @@ def fetch_user_notifications(user_id: str = "demo_learner_01"):
             time="10m ago",
             type="roadmap",
             read=False,
-            target_tab="path"
+            target_tab="learning-path"
         ),
         NotificationItem(
             id="notif_02",
@@ -581,7 +581,7 @@ def fetch_user_notifications(user_id: str = "demo_learner_01"):
             time="1d ago",
             type="skillgap",
             read=True,
-            target_tab="skillgap"
+            target_tab="skill-gap"
         )
     ]
 
