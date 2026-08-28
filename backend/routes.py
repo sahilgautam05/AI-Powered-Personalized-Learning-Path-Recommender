@@ -1,5 +1,6 @@
 import json
 import sqlite3
+from pydantic import BaseModel
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List, Dict, Any, Optional
 
