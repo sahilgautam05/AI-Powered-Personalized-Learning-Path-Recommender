@@ -71,61 +71,91 @@ async def generate_ai_chat_response(prompt: str, user_profile: Dict[str, Any], c
     if "why" in p_lower and "recommended" in p_lower:
         reply = (
             f"Great question, {user_name}! Your top recommendations are tailored specifically for your target goal: **{user_goal}**.\n\n"
-            f"• **SIEM & Log Analysis** was recommended because your current level is **40%**, while a SOC Analyst role requires **85%** (a 45% gap).\n"
-            f"• **Wireshark Deep Dive** was selected because you already scored **90% in Networking**, making you fully ready to master packet dissection without struggling with prerequisites!"
+            f"• **Target Skill Matching:** Courses are selected based on your current skill proficiency vs the target benchmark required for **{user_goal}**.\n"
+            f"• **Prerequisite Checking:** Modules are ordered so you meet required foundational skills before advancing to complex topics."
         )
-        followups = ["How do I improve SIEM faster?", "Show my full skill gap breakdown", "What project should I do next?"]
+        followups = ["How do I improve my skills faster?", "Show my full skill gap breakdown", "What project should I do next?"]
 
-    elif "tcp/ip" in p_lower or "explain" in p_lower:
+    elif "tcp/ip" in p_lower or "networking" in p_lower or "ip address" in p_lower:
         reply = (
-            f"### TCP/IP Simply Explained 🌐\n\n"
+            f"### Networking & TCP/IP Explained 🌐\n\n"
             f"Think of TCP/IP like sending a registered letter through the post office:\n\n"
-            f"1. **IP (Internet Protocol):** Like the postal address on the envelope. It makes sure packets reach the right destination IP address.\n"
-            f"2. **TCP (Transmission Control Protocol):** Like registered mail tracking. It breaks data into numbered packets, checks that none get lost, and puts them back in exact order.\n\n"
-            f"**Why it matters for {user_goal}:** Wireshark captures these exact TCP SYN, ACK, and FIN packets so you can spot anomaly patterns!"
+            f"1. **IP (Internet Protocol):** Like the address on the envelope. It routes data packets to the correct IP address.\n"
+            f"2. **TCP (Transmission Control Protocol):** Ensures reliability. It numbers data packets, verifies none are dropped, and reassembles them in exact order.\n\n"
+            f"**Relevance to {user_goal}:** Understanding packet flow (SYN, ACK, FIN) is critical for network debugging and analysis!"
         )
-        followups = ["What is the TCP 3-way handshake?", "How does UDP differ from TCP?", "Recommend a Wireshark lab"]
+        followups = ["What is the TCP 3-way handshake?", "How does UDP differ from TCP?", "Recommend a networking course"]
 
-    elif "5 hours" in p_lower or "time" in p_lower or "schedule" in p_lower:
+    elif "5 hours" in p_lower or "time" in p_lower or "schedule" in p_lower or "hours" in p_lower:
         reply = (
-            f"### 5-Hour Focus Plan for {user_name} ⏱️\n\n"
-            f"Since you have 5 hours available this week, here is an optimized micro-learning plan for your **{user_goal}** goal:\n\n"
-            f"• **Mon & Tue (1.5 hrs):** Complete *Network Traffic Analysis with Wireshark* lab (Res #03).\n"
-            f"• **Wed & Thu (2.0 hrs):** Work through *Splunk & SIEM Log Analysis Mastery* (Res #05).\n"
-            f"• **Fri (1.5 hrs):** Take the *Security Tools & Wireshark Quiz* (Assessment #03) to lock in your score!\n\n"
-            f"This pace keeps your 68% path momentum going strong without burnout!"
+            f"### Weekly Study Plan for {user_name} ⏱️\n\n"
+            f"Here is an optimized study plan for your **{user_goal}** goal:\n\n"
+            f"• **Phase 1 (2.0 hrs):** Complete core video module & take notes.\n"
+            f"• **Phase 2 (2.0 hrs):** Work through hands-on practice labs.\n"
+            f"• **Phase 3 (1.0 hr):** Take the milestone quiz assessment to verify your score!\n\n"
+            f"This pace keeps your roadmap momentum going strong without burnout!"
         )
-        followups = ["What if I only have 2 hours?", "Adjust my path pace", "Remind me of next milestone"]
+        followups = ["Adjust my path pace", "Remind me of next milestone", "What should I learn next?"]
+
+    elif "react" in p_lower or "javascript" in p_lower or "web" in p_lower or "full stack" in p_lower or "frontend" in p_lower:
+        reply = (
+            f"### Mastering Web Development & React ⚛️\n\n"
+            f"To build modern full stack applications as a **{user_goal}**, follow this progression:\n\n"
+            f"1. **Modern JavaScript (ES6+):** Master Arrow functions, Promises, `async/await`, Destructuring, and Array methods (`map`, `filter`).\n"
+            f"2. **React Fundamentals:** Learn Components, Props, State (`useState`), Effects (`useEffect`), and Component Lifecycle.\n"
+            f"3. **State & Routing:** Build multi-page single-page apps using React Router and global state management.\n"
+            f"4. **Backend Integration:** Connect React frontend components to REST APIs using `fetch` or `axios`."
+        )
+        followups = ["Recommend a React course", "Explain React HooksSimply", "Show Full Stack roadmap"]
+
+    elif "python" in p_lower or "data science" in p_lower or "machine learning" in p_lower or "ai" in p_lower or "ml" in p_lower:
+        reply = (
+            f"### Python & Machine Learning Roadmap 🐍🤖\n\n"
+            f"For your **{user_goal}** journey, Python is the foundational language:\n\n"
+            f"1. **Core Data Libraries:** Master `NumPy` for matrix operations, `Pandas` for dataframes, and `Matplotlib/Seaborn` for data visualization.\n"
+            f"2. **Machine Learning:** Build regression, classification, and clustering models with `Scikit-Learn`.\n"
+            f"3. **Deep Learning & LLMs:** Train neural networks using `PyTorch` or `TensorFlow`, and build RAG applications with LangChain."
+        )
+        followups = ["Recommend Python course", "Explain Machine Learning simply", "Show AI/ML roadmap"]
+
+    elif "cyber" in p_lower or "security" in p_lower or "siem" in p_lower or "linux" in p_lower:
+        reply = (
+            f"### Cybersecurity & SIEM Mastery 🛡️\n\n"
+            f"Key domains to master for **{user_goal}**:\n\n"
+            f"1. **Linux Command Line:** Master file permissions, processes (`ps`, `top`), bash scripting, and log analysis (`/var/log`).\n"
+            f"2. **SIEM & Log Ingestion:** Learn Splunk or Elastic Stack to ingest Syslog and detect attack signatures.\n"
+            f"3. **Incident Response:** Follow NIST framework to triage, contain, and remediate security events."
+        )
+        followups = ["Recommend Splunk lab", "How to practice Incident Response?", "Show Cybersecurity path"]
 
     elif "skill gap" in p_lower or "gap" in p_lower:
         reply = (
             f"### Your Skill Gap Analysis for {user_goal} 📊\n\n"
-            f"Here are your highest priority focus areas:\n"
-            f"1. **Incident Response:** Current: 20% | Target: 85% (⚡ 65% Gap)\n"
-            f"2. **SIEM / Log Analysis:** Current: 40% | Target: 85% (⚡ 45% Gap)\n"
-            f"3. **Linux Security:** Current: 60% | Target: 80% (⚡ 20% Gap)\n\n"
-            f"**Good news:** You have strong fundamentals in **Networking (90%)** and **Python (85%)** which will make mastering SIEM much smoother!"
+            f"The system continuously evaluates your proficiency against target benchmarks for **{user_goal}**.\n\n"
+            f"• Completing recommended courses & labs increases your skill levels by **+15%** per course.\n"
+            f"• Passing module quiz assessments verifies your score and unlocks upcoming advanced phases!"
         )
-        followups = ["Show SIEM resources", "Start Incident Response module", "Take SIEM practice quiz"]
+        followups = ["Show my full skill gap breakdown", "Start recommended module", "Take practice assessment"]
 
     elif "next" in p_lower or "what should i learn" in p_lower:
         reply = (
-            f"Your next recommended action is **Complete SIEM Log Analysis Lab**.\n\n"
-            f"**Why?** You have already completed Phase 1 (Networking) and Phase 2 (Linux). Moving to SIEM Log Analysis now directly targets your largest skill gap while using your existing Linux & Python knowledge!"
+            f"Your next recommended step is to open your **My Personalized Learning Path** tab and complete the active phase module for **{user_goal}**.\n\n"
+            f"Completing this module will boost your career readiness score and unlock the phase milestone quiz!"
         )
-        followups = ["Start SIEM Lab now", "Why is SIEM important?", "Show full roadmap"]
+        followups = ["Go to My Learning Path", "Show top recommendation", "Ask about study schedule"]
 
     else:
         reply = (
-            f"Hello {user_name}! As your **LearnPath AI Mentor**, I'm keeping track of your goal to become a **{user_goal}**.\n\n"
-            f"You are currently **68% complete** on your 6-month roadmap. Your strongest skill is **Networking (90%)** and your target focus area is **SIEM & Incident Response**.\n\n"
-            f"How can I help you accelerate your learning today?"
+            f"Great question about **'{prompt}'**! As your **LearnPath AI Mentor** for **{user_goal}**:\n\n"
+            f"• To master this topic effectively, start with foundational concepts, practice with hands-on projects, and test your knowledge with module quizzes.\n"
+            f"• I am fully synchronized with your **{user_goal}** roadmap and can guide you step-by-step through any concept or skill gap!\n\n"
+            f"What specific area of '{prompt}' would you like to explore deeper?"
         )
         followups = [
-            "Why was this course recommended?",
-            "Explain TCP/IP simply",
-            "What should I learn next?",
-            "I only have 5 hours this week"
+            f"Explain '{prompt}' simply",
+            "Recommend a course for this",
+            "Show my learning roadmap",
+            "Help me plan my study schedule"
         ]
 
     return {

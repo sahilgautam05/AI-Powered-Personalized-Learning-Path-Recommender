@@ -323,7 +323,7 @@ def generate_goal_tailored_phases(goal: str, profile: LearnerProfile) -> List[Ph
 def compute_user_overall_progress(profile: LearnerProfile) -> int:
     goal_reqs = get_goal_requirements(profile.goal)
     if not goal_reqs:
-        return 68
+        return 0
     
     total_req = sum(goal_reqs.values())
     total_acquired = 0
@@ -332,7 +332,7 @@ def compute_user_overall_progress(profile: LearnerProfile) -> int:
         total_acquired += min(curr_lvl, req_level)
 
     calc_pct = int((total_acquired / max(1, total_req)) * 100)
-    return max(15, min(98, calc_pct))
+    return min(100, max(0, calc_pct))
 
 # 5. Learning Path Endpoint
 @router.post("/learning-path", response_model=LearningPathResponse)
