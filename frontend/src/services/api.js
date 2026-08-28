@@ -76,50 +76,89 @@ export function generateLocalAiReply(prompt, profile) {
   const userName = profile?.name || 'Learner';
   const userGoal = profile?.goal || 'Full Stack Developer';
 
-  if (pLower.includes('why') && pLower.includes('recommended')) {
+  if (any(k => pLower.includes(k), ["react", "usestate", "useeffect", "jsx", "virtual dom", "component", "props", "hook"])) {
     return {
-      reply: `Great question, ${userName}! Your recommendations are specifically weighted for **${userGoal}**.\n\n• **Goal Relevance (30%):** Modules focus on essential skills for ${userGoal}.\n• **Skill Gap (25%):** Recommendations prioritize areas where your current proficiency is below target benchmarks.\n• **Prerequisites (15%):** Foundational topics are scheduled before advanced projects.`,
-      suggested_followups: ["Show my skill gap analysis", "What should I learn next?", "Create a 7-day study plan"]
+      reply: `### Mastering React 18 & Frontend Architecture ⚛️\n\nGreat question, ${userName}! In modern React development:\n\n1. **\`useState\` Hook:** Manages local component state. Calling \`setState(newValue)\` triggers a clean re-render with updated state values.\n2. **\`useEffect\` Hook:** Handles side-effects (API data fetching, subscriptions, timers). Pass an empty dependency array \`[]\` to run once on component mount.\n3. **Virtual DOM:** React keeps an in-memory representation of the UI and calculates exact diffs (reconciliation) before updating the real browser DOM, ensuring high performance.\n\n\`\`\`jsx\n// Example: Data Fetching Component in React 18\nimport React, { useState, useEffect } from 'react';\n\nexport default function UserProfile({ userId }) {\n  const [userData, setUserData] = useState(null);\n  useEffect(() => {\n    fetch(\`/api/user/\${userId}\`)\n      .then(res => res.json())\n      .then(data => setUserData(data));\n  }, [userId]);\n  return <div>{userData ? userData.name : 'Loading...'}</div>;\n}\n\`\`\`\n\n**Next Step for ${userGoal}:** Practice building reusable components and connecting them to REST APIs!`,
+      suggested_followups: ["Explain React useEffect dependencies", "How to manage global state with Context API?", "Recommend a React course"]
     };
   }
 
-  if (pLower.includes('react') || pLower.includes('javascript') || pLower.includes('web') || pLower.includes('full stack')) {
+  if (any(k => pLower.includes(k), ["javascript", "js", "promise", "async", "await", "closure", "event loop", "arrow function"])) {
     return {
-      reply: `### Mastering Web Development & React ⚛️\n\nFor **${userGoal}**, here is the recommended learning order:\n\n1. **Modern JavaScript (ES6+):** Arrow functions, Promises, \`async/await\`, and Array methods (\`map\`, \`filter\`).\n2. **React Core:** Components, Props, State (\`useState\`), Effects (\`useEffect\`), and Event handling.\n3. **API Integration:** Connect React frontend components to REST APIs using \`fetch\` or \`axios\`.\n4. **Database & Backend:** Express.js, Node.js, and SQL / MongoDB database persistence.`,
-      suggested_followups: ["Recommend a React course", "Explain React Hooks simply", "Show Full Stack roadmap"]
+      reply: `### Modern JavaScript ES6+ & Async Deep Dive 🟨\n\nHere is how modern JavaScript handles execution and asynchronous tasks:\n\n1. **Event Loop & Call Stack:** Synchronous code executes first on the single-threaded Call Stack. Asynchronous callbacks (Promises, \`fetch\`) are queued in the Microtask Queue and executed when the stack clears.\n2. **Promises & \`async/await\`:** Promises represent future values (Pending, Fulfilled, Rejected). \`async/await\` is syntactic sugar that allows writing asynchronous code sequentially without callback nesting.\n3. **Closures:** A function retains access to variables from its outer lexical scope even after the outer function has executed.\n\n\`\`\`javascript\n// Example: Modern Async/Await with Error Handling\nasync function fetchLearnerProgress(learnerId) {\n  try {\n    const response = await fetch(\`/api/progress/\${learnerId}\`);\n    if (!response.ok) throw new Error(\`HTTP Error \${response.status}\`);\n    const data = await response.json();\n    return data;\n  } catch (error) {\n    console.error('Fetch error:', error);\n  }\n}\n\`\`\``,
+      suggested_followups: ["Explain Event Loop microtask queue", "What is the difference between let, const, and var?", "Recommend JS async course"]
     };
   }
 
-  if (pLower.includes('python') || pLower.includes('data') || pLower.includes('ai') || pLower.includes('ml') || pLower.includes('machine learning')) {
+  if (any(k => pLower.includes(k), ["node", "express", "api", "rest", "backend", "middleware", "route", "jwt"])) {
     return {
-      reply: `### Python & AI / Machine Learning Roadmap 🐍🤖\n\nTo excel as a **${userGoal}**:\n\n1. **Data Manipulation:** Master \`NumPy\` for numerical math and \`Pandas\` for dataframes.\n2. **Machine Learning:** Train decision trees, regression, and classification models with \`Scikit-Learn\`.\n3. **Deep Learning & LLMs:** Build neural networks with \`PyTorch\` and construct RAG applications with LangChain.`,
-      suggested_followups: ["Recommend Python course", "Explain Machine Learning simply", "Show AI/ML roadmap"]
+      reply: `### Node.js & Express REST API Architecture 🟢\n\nFor building scalable backend web services:\n\n1. **RESTful Architecture:** Express routes use HTTP methods cleanly:\n   • \`GET /api/resources\` — Retrieve items\n   • \`POST /api/resources\` — Create new item\n   • \`PUT /api/resources/:id\` — Update item\n   • \`DELETE /api/resources/:id\` — Delete item\n2. **Express Middleware:** Functions that execute sequentially during request/response cycles (\`(req, res, next)\`), ideal for authentication and logging.\n3. **JWT Authentication:** Server signs a JSON Web Token upon login; client passes \`Authorization: Bearer <token>\` in HTTP headers.`,
+      suggested_followups: ["Explain Express middleware order", "How to implement JWT authentication?", "Recommend Express backend course"]
     };
   }
 
-  if (pLower.includes('cyber') || pLower.includes('security') || pLower.includes('siem') || pLower.includes('linux') || pLower.includes('network') || pLower.includes('tcp')) {
+  if (any(k => pLower.includes(k), ["python", "pip", "list comprehension", "dictionary", "tuple", "class", "def"])) {
     return {
-      reply: `### Cybersecurity & SIEM Mastery 🛡️\n\nKey pillars for **${userGoal}**:\n\n1. **Linux Command Line:** Master file permissions, processes (\`ps\`, \`top\`), and system logs (\`/var/log\`).\n2. **Network Protocol Analysis:** Use Wireshark to inspect TCP 3-way handshakes and packet headers.\n3. **SIEM Log Ingestion:** Use Splunk or Elastic Stack to ingest Syslog and construct alert dashboards.`,
-      suggested_followups: ["Recommend Splunk lab", "Explain TCP/IP simply", "Show Cybersecurity path"]
+      reply: `### Python Programming & Best Practices 🐍\n\nPython is clean, highly readable, and versatile:\n\n1. **List Comprehensions:** Concise syntax for creating lists:\n   \`squared_numbers = [x**2 for x in range(10) if x % 2 == 0]\`\n2. **Dictionaries:** Hash-map key-value lookups with \`O(1)\` average time complexity.\n3. **Classes & OOP:** Define data blueprints with \`class\` and \`__init__(self)\` constructors.`,
+      suggested_followups: ["Explain Python Decorators", "What is the difference between list, tuple, and set?", "Recommend Python course"]
     };
   }
 
-  if (pLower.includes('5 hours') || pLower.includes('time') || pLower.includes('schedule') || pLower.includes('hours')) {
+  if (any(k => pLower.includes(k), ["pandas", "numpy", "dataframe", "data science", "matplotlib", "seaborn", "csv"])) {
     return {
-      reply: `### Weekly Focus Schedule for ${userName} ⏱️\n\nHere is an optimized weekly schedule for your **${userGoal}** goal:\n\n• **Phase 1 (2.0 hrs):** Watch core video tutorials & take key notes.\n• **Phase 2 (2.0 hrs):** Complete hands-on practice labs.\n• **Phase 3 (1.0 hr):** Take the milestone quiz assessment to verify your skill score!`,
-      suggested_followups: ["Adjust my path pace", "Remind me of next milestone", "What should I learn next?"]
+      reply: `### Data Science & Data Wrangling with Pandas 📊\n\nEssential tools for data analysis:\n\n1. **NumPy Arrays:** Vectorized N-dimensional math operations running in C speeds.\n2. **Pandas DataFrames:** 2D tabular data structure with powerful indexing:\n   • \`df = pd.read_csv('data.csv')\` — Load data\n   • \`df.groupby('category').mean()\` — Aggregate data\n   • \`df.fillna(0)\` — Clean missing null values\n3. **Visualization:** Use Seaborn & Matplotlib to plot histograms, scatter plots, and correlation heatmaps.`,
+      suggested_followups: ["Explain Pandas groupby and aggregate", "How to handle missing values in Pandas?", "Recommend Data Science course"]
+    };
+  }
+
+  if (any(k => pLower.includes(k), ["machine learning", "ml", "regression", "classification", "scikit", "overfitting", "training"])) {
+    return {
+      reply: `### Machine Learning Engineering & Algorithms 🤖\n\nCore workflow for building predictive models:\n\n1. **Supervised vs Unsupervised:** Supervised uses labeled data (Regression, Classification); Unsupervised finds hidden patterns (K-Means Clustering).\n2. **Train/Test Split:** Split data (80% train, 20% test) to evaluate generalization performance.\n3. **Overfitting:** Occurs when a model memorizes training noise instead of learning general patterns; mitigate with regularization (L1/L2) and cross-validation.`,
+      suggested_followups: ["Explain Random Forest vs Decision Trees", "How to prevent overfitting?", "Recommend Machine Learning course"]
+    };
+  }
+
+  if (any(k => pLower.includes(k), ["cyber", "security", "wireshark", "packet", "port", "subnet", "tcp/ip", "handshake"])) {
+    return {
+      reply: `### Computer Networking & Wireshark Packet Analysis 🛡️\n\nNetwork fundamentals for SOC Analysts and Security Engineers:\n\n1. **TCP 3-Way Handshake:** Connection establishment via \`SYN\` ➔ \`SYN-ACK\` ➔ \`ACK\` flags.\n2. **Common Standard Ports:** \`22\` (SSH), \`53\` (DNS), \`80\` (HTTP), \`443\` (HTTPS), \`3306\` (MySQL).\n3. **Wireshark Display Filters:**\n   • \`ip.addr == 192.168.1.1\` — Filter by IP address\n   • \`http.request.method == 'POST'\` — Inspect form submissions\n   • \`tcp.flags.syn == 1 and tcp.flags.ack == 0\` — Spot SYN flood attacks`,
+      suggested_followups: ["Explain TCP SYN flood attack", "How to carve files in Wireshark?", "Recommend Wireshark lab"]
+    };
+  }
+
+  if (any(k => pLower.includes(k), ["siem", "splunk", "log", "syslog", "soc", "incident", "event id"])) {
+    return {
+      reply: `### SIEM Operations & Splunk Log Analysis 🔍\n\nHow Security Operations Centers detect & investigate threats:\n\n1. **Log Aggregation:** SIEM ingests Windows Event Logs, Syslog, firewall logs, and cloud audit trails into a centralized index.\n2. **Key Windows Event IDs:**\n   • \`4624\` — Successful Logon\n   • \`4625\` — Failed Logon (multiple 4625s indicate brute-force attempts!)\n   • \`4688\` — New Process Created\n3. **Splunk SPL Query:** \`index=security EventCode=4625 | stats count by TargetUserName | where count > 5\``,
+      suggested_followups: ["Recommend Splunk hands-on lab", "Explain NIST Incident Response framework", "Show Cybersecurity path"]
+    };
+  }
+
+  if (any(k => pLower.includes(k), ["dsa", "placement", "algorithm", "binary tree", "hash table", "complexity", "big o"])) {
+    return {
+      reply: `### Technical Placement & DSA Master Strategy 🎯\n\nHigh-frequency topics for technical coding interviews:\n\n1. **Time Complexity (Big-O):** \`O(1)\` constant, \`O(log N)\` binary search, \`O(N)\` linear, \`O(N log N)\` quicksort, \`O(N²)\` nested loops.\n2. **Must-Master Data Structures:** Two Pointers, Sliding Window, Fast & Slow Pointers, Hash Maps (\`O(1)\` lookup), Binary Search Trees, Graphs (BFS/DFS).\n3. **Preparation Plan:** Solve 2 LeetCode problems daily, focusing on understanding pattern recognition over memorization!`,
+      suggested_followups: ["Explain Sliding Window pattern", "How to calculate Big-O time complexity?", "Recommend DSA placement roadmap"]
+    };
+  }
+
+  if (any(k => pLower.includes(k), ["sql", "database", "join", "select", "group by", "postgres", "sqlite", "foreign key"])) {
+    return {
+      reply: `### Relational Databases & SQL Mastery 🛢️\n\nCore database concepts for full stack & data roles:\n\n1. **SQL JOINs:**\n   • \`INNER JOIN\`: Returns records with matching keys in both tables.\n   • \`LEFT JOIN\`: Returns all records from left table, and matched records from right.\n2. **ACID Properties:** Atomicity, Consistency, Isolation, Durability guarantee transaction safety.\n3. **Query Optimization:** Add Indexes (\`CREATE INDEX idx_email ON users(email)\`) on columns frequently queried in \`WHERE\` and \`JOIN\` clauses to avoid full table scans.`,
+      suggested_followups: ["Explain SQL INNER vs LEFT JOIN with example", "What are ACID properties in database?", "Recommend SQL course"]
     };
   }
 
   return {
-    reply: `Great question regarding **"${prompt}"**!\n\nAs your **LearnPath AI Mentor** for **${userGoal}**:\n\n• **Key Strategy:** Start with core fundamentals, complete hands-on practice labs, and test your knowledge with module quiz assessments.\n• I am fully synchronized with your **${userGoal}** roadmap and can guide you step-by-step through any concept or skill gap!\n\nWhat specific part of "${prompt}" would you like to explore further?`,
+    reply: `### Learning Guidance for **"${prompt}"** 💡\n\nHello ${userName}! Here is a structured 3-part blueprint to master **"${prompt}"** for your **${userGoal}** goal:\n\n1. **Core Concepts:** Understand foundational principles, key terminology, and syntax.\n2. **Hands-on Practice:** Build a small real-world application or lab exercise applying this skill.\n3. **Assessment & Verification:** Take the module verification quiz to lock in your score and update your overall readiness percentage!\n\nWhat specific topic regarding **"${prompt}"** would you like me to explain deeper?`,
     suggested_followups: [
-      `Explain "${prompt}" simply`,
+      `Explain "${prompt}" simply with code`,
       `Recommend a course for ${prompt}`,
       `Show my learning roadmap`,
       `Help me plan my study schedule`
     ]
   };
+}
+
+function any(predicate, items) {
+  return items.some(predicate);
 }
 
 export function generateGoalSpecificQuiz(assessmentId = 'quiz_03', userGoal = 'Full Stack Developer') {
