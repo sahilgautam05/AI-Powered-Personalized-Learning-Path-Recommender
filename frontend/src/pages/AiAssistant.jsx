@@ -52,7 +52,7 @@ export default function AiAssistant({ profile }) {
       const aiMsg = {
         id: Date.now() + 1,
         sender: 'ai',
-        text: res.reply,
+        text: res.response || res.reply || "Here is guidance tailored for your goal!",
         followups: res.suggested_followups || []
       };
       setMessages(prev => [...prev, aiMsg]);

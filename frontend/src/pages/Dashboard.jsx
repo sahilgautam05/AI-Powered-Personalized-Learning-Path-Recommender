@@ -1,5 +1,5 @@
 import React from 'react';
-import { Target, Award, ArrowRight, Play, CheckCircle2, AlertTriangle, Sparkles } from 'lucide-react';
+import { Target, Award, ArrowRight, Play, CheckCircle2, AlertTriangle, Sparkles, Bot, Search, Zap, BarChart2 } from 'lucide-react';
 import RecommendationCard from '../components/RecommendationCard';
 import './Dashboard.css';
 
@@ -80,6 +80,26 @@ export default function Dashboard({ profile, learningPath, recommendations, onNa
           <button className="btn btn-primary" onClick={() => onNavigate('learning-path')}>
             Continue Learning Path <ArrowRight size={16} />
           </button>
+        </div>
+      </div>
+
+      {/* Quick Action Navigation Hub */}
+      <div className="dashboard-shortcuts-row">
+        <div className="shortcut-btn-card" onClick={() => onNavigate('explore')}>
+          <Search size={18} className="icon icon-primary" />
+          <span>Explore 100+ Resources</span>
+        </div>
+        <div className="shortcut-btn-card" onClick={() => onNavigate('ai-assistant')}>
+          <Bot size={18} className="icon icon-accent" />
+          <span>Ask AI Mentor Assistant</span>
+        </div>
+        <div className="shortcut-btn-card" onClick={() => onNavigate('skill-gap')}>
+          <Zap size={18} className="icon icon-warning" />
+          <span>Skill Gap Matrix</span>
+        </div>
+        <div className="shortcut-btn-card" onClick={() => onNavigate('progress')}>
+          <BarChart2 size={18} className="icon icon-success" />
+          <span>Detailed Telemetry</span>
         </div>
       </div>
 
