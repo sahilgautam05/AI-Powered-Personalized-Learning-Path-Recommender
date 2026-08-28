@@ -3,10 +3,39 @@ import { Target, Award, ArrowRight, Play, CheckCircle2, AlertTriangle, Sparkles,
 import RecommendationCard from '../components/RecommendationCard';
 import './Dashboard.css';
 
-export default function Dashboard({ profile, learningPath, recommendations, onNavigate, onOpenResource }) {
+export default function Dashboard({ profile, learningPath, recommendations, onNavigate, onOpenResource, completedResourceIds = new Set() }) {
   const userGoal = profile?.goal || 'Cybersecurity Analyst';
   const userName = profile?.name || 'Sahil';
-  const overallProgress = learningPath?.overall_progress || 68;
+
+  const GOAL_REQUIREMENTS_MAP = {
+    'Cybersecurity Analyst': { 'Networking': 95, 'Linux': 80, 'SIEM': 85, 'Incident Response': 85, 'Python': 75, 'SQL': 70 },
+    'Data Scientist': { 'Python': 95, 'SQL': 90, 'Machine Learning': 90, 'Statistics': 85, 'Data Visualization': 80, 'Deep Learning': 75 },
+    'Full Stack Developer': { 'JavaScript': 90, 'React': 90, 'Node.js': 85, 'Python': 80, 'SQL': 80, 'HTML/CSS': 90 },
+    'Learn AI/ML & Prompt Engineering': { 'Python': 95, 'PyTorch/TensorFlow': 90, 'Machine Learning': 90, 'LLMs & RAG': 90, 'Prompt Engineering': 85 },
+    'Prepare for Technical Placements': { 'Data Structures & Algorithms': 95, 'System Design': 85, 'Java': 85, 'C++': 85, 'SQL': 80 },
+    'Build an AI Startup': { 'Python': 90, 'LLMs & RAG': 90, 'Full Stack Architecture': 85, 'System Design': 85, 'DevOps & Cloud': 80 },
+    'Learn Coding & Game Development (Ages 10-16)': { 'Block Coding & Logic': 90, 'Python': 80, 'Game Dev (Scratch/Unity)': 85, 'Problem Solving & Critical Thinking': 85 },
+    'Cloud & DevOps Engineering (Ages 25-50)': { 'DevOps & Docker': 95, 'Cloud (AWS/Azure)': 90, 'Linux': 85, 'System Design': 85, 'Python': 80 },
+    'Project Management & Technical Leadership (Ages 25-50)': { 'Leadership & Team Management': 95, 'Project & Agile Management (Scrum)': 95, 'Product Strategy & Business Analysis': 90, 'Technical Communication': 90 }
+  };
+
+  const getDynamicOverallProgress = () => {
+    if (learningPath?.overall_progress !== undefined && learningPath?.overall_progress !== null) {
+      return learningPath.overall_progress;
+    }
+    const reqs = GOAL_REQUIREMENTS_MAP[userGoal] || GOAL_REQUIREMENTS_MAP['Cybersecurity Analyst'];
+    let totalReq = 0;
+    let totalAcquired = 0;
+    Object.entries(reqs).forEach(([sName, targetVal]) => {
+      totalReq += targetVal;
+      const currLevel = profile?.existing_skills?.[sName] || 0;
+      totalAcquired += Math.min(currLevel, targetVal);
+    });
+    const pct = Math.round((totalAcquired / Math.max(1, totalReq)) * 100);
+    return Math.min(100, Math.max(0, pct));
+  };
+
+  const overallProgress = getDynamicOverallProgress();
   const currentMilestone = learningPath?.current_milestone || 'Security Monitoring & SIEM';
 
   const nextRecommendation = recommendations && recommendations.length > 0 ? recommendations[0] : {
@@ -20,18 +49,6 @@ export default function Dashboard({ profile, learningPath, recommendations, onNa
     prerequisites: ["Linux", "Networking"],
     match_score: 95,
     why_recommended: "Recommended because it addresses your current SIEM skill gap (40% vs target 85%) and follows your completed security fundamentals module."
-  };
-
-  const GOAL_REQUIREMENTS_MAP = {
-    'Cybersecurity Analyst': { 'Networking': 95, 'Linux': 80, 'SIEM': 85, 'Incident Response': 85, 'Python': 75, 'SQL': 70 },
-    'Data Scientist': { 'Python': 95, 'SQL': 90, 'Machine Learning': 90, 'Statistics': 85, 'Data Visualization': 80, 'Deep Learning': 75 },
-    'Full Stack Developer': { 'JavaScript': 90, 'React': 90, 'Node.js': 85, 'Python': 80, 'SQL': 80, 'HTML/CSS': 90 },
-    'Learn AI/ML & Prompt Engineering': { 'Python': 95, 'PyTorch/TensorFlow': 90, 'Machine Learning': 90, 'LLMs & RAG': 90, 'Prompt Engineering': 85 },
-    'Prepare for Technical Placements': { 'Data Structures & Algorithms': 95, 'System Design': 85, 'Java': 85, 'C++': 85, 'SQL': 80 },
-    'Build an AI Startup': { 'Python': 90, 'LLMs & RAG': 90, 'Full Stack Architecture': 85, 'System Design': 85, 'DevOps & Cloud': 80 },
-    'Learn Coding & Game Development (Ages 10-16)': { 'Block Coding & Logic': 90, 'Python': 80, 'Game Dev (Scratch/Unity)': 85, 'Problem Solving & Critical Thinking': 85 },
-    'Cloud & DevOps Engineering (Ages 25-50)': { 'DevOps & Docker': 95, 'Cloud (AWS/Azure)': 90, 'Linux': 85, 'System Design': 85, 'Python': 80 },
-    'Project Management & Technical Leadership (Ages 25-50)': { 'Leadership & Team Management': 95, 'Project & Agile Management (Scrum)': 95, 'Product Strategy & Business Analysis': 90, 'Technical Communication': 90 }
   };
 
   const getGoalSkillBars = () => {
