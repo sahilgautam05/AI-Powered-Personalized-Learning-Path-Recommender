@@ -10,12 +10,20 @@ export async function fetchApi(endpoint, options = {}) {
       ...options
     });
 
-    if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      throw new Error(errData.detail || `HTTP Error ${res.status}`);
+    const contentType = res.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      if (!res.ok) {
+        throw new Error(`Server returned status ${res.status}. Please check backend connection.`);
+      }
+      throw new Error(`Server response format error (non-JSON response).`);
     }
 
-    return await res.json();
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.detail || `HTTP Error ${res.status}`);
+    }
+
+    return data;
   } catch (err) {
     console.warn(`API call ${endpoint} failed:`, err);
     throw err;
